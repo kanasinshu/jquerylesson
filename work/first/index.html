@@ -48,6 +48,42 @@
 </div>
 <script src="../../common/js/jquery.js"></script>
 <script>
+  $(function() {
+    $('#q1').css('color', 'red');
+
+    $('#q2').click(function() {
+      $(this).css('background-color', 'pink')
+    })
+
+    $('#q3').click(function() {
+      $(this).prepend('子要素の前')
+             .append('子要素の後')
+             .before('指定要素の前')
+             .after('指定要素の後')
+    });
+
+    $('#q4').click(function() {
+      $(this).addClass('large');
+    })
+
+    $('#q5').click(function() {
+      $(this).animate({
+        'margin-top' : '100px',
+        'margin-left' : '100px',
+      }, 2000);
+    });
+
+    $('#q6 > li').click(function() {
+      const index = $(this).index();
+      console.log(index);
+      alert(index);
+    });
+
+    $('#q7').click(function() {
+      const text = $(this).data('text');
+      console.log(text);
+    });
+});
 // 第1問  id='q1'の要素の文字色を赤色にせよ。
 // 第2問  id='q2'の要素をクリックしたら背景色をピンクにせよ。
 // 第3問  id='q3'の要素をクリックしたらこの要素の前後とこの要素内の前後にテキストを挿入せよ。
