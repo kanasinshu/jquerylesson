@@ -28,7 +28,7 @@
         <button class="btn mt" data-js="reset">戻る</button>
       `;
 
-      // 「ポケモンを探す」後の画面表示
+      // 「ポケモンを探す」後のポケモン表示画面
       let encountHtml =
       `
         <p class="name"></p>
@@ -41,7 +41,7 @@
         </div>
       `;
 
-      // 「捕まえる」成功時の画面表示
+      // 「捕まえる」成功時のモンスターボール表示画面
       let doneHtml =
       `
         <p class="name">ゲットしました</p>
@@ -52,17 +52,26 @@
       `;
       //ポケモンを探すクリックした時の挙動
       $(document).on('click', '#pokemon_search', function() {
+        let pokemonId = Math.floor(Math.random() * 151) + 1;
+
         $.ajax({
-          url: 'https://pokeapi.co/api/v2/pokemon/1',
+          url: 'https://pokeapi.co/api/v2/pokemon/' + pokemonId,
           method: 'GET'
         }).done(function(res) {
           //通信成功時できた時の処理内容　今回だとポケモンが現れる処理
-          // response.data.sprites.front_default
-          $('.wrapper').html(encountHtml);
-          $('.name').text(res.name);
-          $('.img').attr('src', res.sprites.front_default);
+          $.ajax({
+            url: res.species.url,
+            method: 'GET'
+          }).done(function(res2) {
+            const jaName = res2.names.find(name => name.language.name === "ja").name;
+            $('.wrapper').html(encountHtml);
+            $('.name').text(jaName);
+            $('.img').attr('src', res.sprites.front_default);
+          }).fail(function(err2) {
+            $('.wrapper').html(failHtml);
+          })
+
         }).fail(function(err) {
-          //通信失敗時の処理内容
           $('.wrapper').html(failHtml);
         });
       });
@@ -72,7 +81,7 @@
           url: 'https://pokeapi.co/api/v2/item/4',
           method: 'GET'
         }).done(function(res) {
-          //50%の確率で以下の処理（成功）
+          //50%の確率でゲット成功・失敗の条件分岐
           if (Math.random() < 0.5) {
             $('#wrapper').html(doneHtml);
             $('.img').attr('src', res.sprites.default);
