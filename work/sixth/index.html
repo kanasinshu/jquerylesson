@@ -15,7 +15,87 @@
   </div>
   <script src="../../common/js/jquery.js"></script>
   <script>
-    // 回答はここに書いてね
+    $(function() {
+      //初期画面
+      const firstHtml =
+      `
+          <button type="button" class="btn search-btn" id="pokemon_search">ポケモンを探す</button>
+      `;
+      // 「捕まえる」失敗時の画面表示
+      const failHtml =
+      `
+        <p class="text">逃げられてしまった...</p>
+        <button class="btn mt" data-js="reset">戻る</button>
+      `;
+
+      // 「ポケモンを探す」後の画面表示
+      let encountHtml =
+      `
+        <p class="name"></p>
+        <div>
+          <img class="img" src="" alt="">
+        </div>
+        <div>
+          <button class="btn" id="catch">捕まえる</button>
+          <button class="btn" data-js="reset">逃げる</button>
+        </div>
+      `;
+
+      // 「捕まえる」成功時の画面表示
+      let doneHtml =
+      `
+        <p class="name">ゲットしました</p>
+        <div>
+          <img class="img" src="" alt="">
+        </div>
+        <button class="btn" data-js="reset">戻る</button>
+      `;
+      //ポケモンを探すクリックした時の挙動
+      $(document).on('click', '#pokemon_search', function() {
+        $.ajax({
+          url: 'https://pokeapi.co/api/v2/pokemon/1',
+          method: 'GET'
+        }).done(function(res) {
+          //通信成功時できた時の処理内容　今回だとポケモンが現れる処理
+          // response.data.sprites.front_default
+          $('.wrapper').html(encountHtml);
+          $('.name').text(res.name);
+          $('.img').attr('src', res.sprites.front_default);
+        }).fail(function(err) {
+          //通信失敗時の処理内容
+          $('.wrapper').html(failHtml);
+        });
+      });
+      //現れた後、捕まえる時の挙動
+      $(document).on('click', '#catch', function() {
+        $.ajax({
+          url: 'https://pokeapi.co/api/v2/item/4',
+          method: 'GET'
+        }).done(function(res) {
+          //50%の確率で以下の処理（成功）
+          if (Math.random() < 0.5) {
+            $('#wrapper').html(doneHtml);
+            $('.img').attr('src', res.sprites.default);
+          } else {
+            $('#wrapper').html(failHtml);
+          }
+        })
+        //通信失敗時の挙動
+        .fail(function(err) {
+          $('#wrapper').html(failHtml);
+        });
+      });
+
+      //戻るボタン
+      $(document).on('click', '[data-js="reset"]', function() {
+          $('#wrapper').html(firstHtml);
+      })
+    });
+      // モンスターの取得
+// 'https://pokeapi.co/api/v2/pokemon/1'
+
+// // モンスターボールの取得ß
+// 'https://pokeapi.co/api/v2/item/4'
   </script>
 </body>
 </html>
